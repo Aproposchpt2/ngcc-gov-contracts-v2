@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NGCC — National Government Contract Center</title>
+<meta name="description" content="Search Federal, Nevada, and California government contracts in one dashboard. Matched to your NAICS codes. Analyze your fit with AI. $19.99/month."/>
+<link rel="canonical" href="https://ngcc.aproposgroupllc.com/"/>
+<meta name="author" content="Apropos Group LLC"/>
+<meta name="theme-color" content="#0F2A6A"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400;1,6..96,500&family=Cormorant:ital,wght@0,500;1,400;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0F2A6A;--ink-2:#163472;--ink-deep:#081A42;
+  --white:#FFFFFF;--silver:#C3D0E8;--mist:#7890B8;
+  --gold:#D5AE55;--gold-dim:rgba(213,174,85,.18);
+  --green:#3EE391;--cyan:#7BDCFF;--amber:#F2B447;
+  --line:rgba(255,255,255,.1);--line-2:rgba(255,255,255,.2);
+  --disp:'Bodoni Moda',Georgia,serif;--sub:'Cormorant',Georgia,serif;--body:'Jost',sans-serif;
+  --max:1160px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--ink);color:rgba(255,255,255,.72);
+  font-weight:300;line-height:1.7;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.022;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:180px}
+a{color:inherit;text-decoration:none}
+
+/* ── Nav ── */
+nav{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;
+  gap:20px;padding:0 clamp(18px,4vw,48px);height:64px;background:rgba(15,42,106,.94);
+  border-bottom:1px solid var(--line);backdrop-filter:blur(18px)}
+.nav-brand{display:flex;align-items:center;gap:12px}
+.nav-mark{width:38px;height:38px;border:1px solid rgba(213,174,85,.5);border-radius:10px;
+  display:grid;place-items:center;font-family:var(--disp);font-size:.72rem;
+  color:var(--gold);font-weight:700;background:rgba(213,174,85,.08)}
+.nav-name{font-family:var(--disp);font-size:1.2rem;color:var(--white);line-height:1}
+.nav-sub{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);font-weight:500}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-links{display:flex;gap:20px;align-items:center}
+.nav-links a{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:500;
+  color:rgba(255,255,255,.5);transition:.18s}
+.nav-links a:hover{color:var(--white)}
+.btn-login{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
+  border:1px solid var(--line-2);border-radius:5px;padding:9px 18px;
+  background:rgba(255,255,255,.06);color:var(--white);transition:.18s;cursor:pointer}
+.btn-login:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.35)}
+.btn-subscribe{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
+  background:var(--white);color:var(--ink);border:none;border-radius:5px;
+  padding:9px 18px;cursor:pointer;transition:.2s}
+.btn-subscribe:hover{background:#EEF3FF}
+
+/* ── Container ── */
+.container{position:relative;z-index:1;max-width:var(--max);margin:0 auto;
+  padding:0 clamp(18px,4vw,48px)}
+
+/* ── Hero ── */
+.hero{padding:clamp(64px,10vw,110px) 0 clamp(48px,8vw,80px);text-align:center;
+  position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-140px;left:50%;transform:translateX(-50%);
+  width:600px;height:600px;background:radial-gradient(circle,rgba(123,220,255,.08),transparent 70%);
+  pointer-events:none}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.64rem;
+  letter-spacing:.22em;text-transform:uppercase;font-weight:600;color:var(--gold);
+  margin-bottom:18px}
+.hero-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--gold);box-shadow:0 0 0 5px rgba(213,174,85,.15)}
+h1{font-family:var(--disp);font-weight:400;font-size:clamp(2.8rem,6vw,5.2rem);
+  line-height:.96;letter-spacing:-.03em;color:var(--white);margin-bottom:16px}
+h1 em{font-family:var(--sub);font-style:italic;color:rgba(255,255,255,.45)}
+.hero-desc{font-size:clamp(.95rem,1.8vw,1.08rem);color:rgba(255,255,255,.55);
+  max-width:600px;margin:0 auto 32px;line-height:1.78}
+.hero-desc strong{color:var(--white);font-weight:400}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:28px}
+.btn-hero-primary{display:inline-flex;align-items:center;justify-content:center;
+  min-height:52px;padding:0 28px;background:var(--white);color:var(--ink);
+  font-family:var(--body);font-weight:700;font-size:.78rem;letter-spacing:.16em;
+  text-transform:uppercase;border:none;border-radius:5px;cursor:pointer;
+  transition:.2s;text-decoration:none}
+.btn-hero-primary:hover{background:#EEF3FF;transform:translateY(-2px)}
+.btn-hero-secondary{display:inline-flex;align-items:center;justify-content:center;
+  min-height:52px;padding:0 24px;background:rgba(255,255,255,.06);color:var(--white);
+  font-family:var(--body);font-weight:600;font-size:.78rem;letter-spacing:.14em;
+  text-transform:uppercase;border:1px solid var(--line-2);border-radius:5px;
+  cursor:pointer;transition:.2s;text-decoration:none}
+.btn-hero-secondary:hover{background:rgba(255,255,255,.12)}
+.hero-trust{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
+.trust-item{font-size:.72rem;color:rgba(255,255,255,.35);letter-spacing:.06em;
+  display:flex;align-items:center;gap:6px}
+.trust-item::before{content:'✓';color:var(--green);font-weight:700}
+
+/* ── Engines strip ── */
+.engines-strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:18px 0;background:rgba(255,255,255,.025)}
+.engines-inner{display:flex;justify-content:center;gap:0;max-width:var(--max);
+  margin:0 auto;padding:0 clamp(18px,4vw,48px)}
+.engine-tab{flex:1;max-width:300px;display:flex;align-items:center;gap:10px;
+  padding:12px 20px;border-right:1px solid var(--line)}
+.engine-tab:last-child{border-right:none}
+.engine-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ed-federal{background:var(--cyan)}
+.ed-nevada{background:var(--green)}
+.ed-california{background:var(--amber)}
+.engine-label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+  font-weight:600;color:var(--white)}
+.engine-note{font-size:.68rem;color:var(--mist);margin-top:2px}
+
+/* ── Divider ── */
+.divider{width:60px;height:1px;background:var(--gold-dim);margin:0 auto}
+
+/* ── Section headers ── */
+.section-eyebrow{font-size:.64rem;letter-spacing:.22em;text-transform:uppercase;
+  font-weight:600;color:var(--gold);text-align:center;margin-bottom:12px}
+.section-title{font-family:var(--disp);font-weight:400;font-size:clamp(2rem,4vw,3rem);
+  color:var(--white);text-align:center;margin-bottom:10px;line-height:1.08}
+.section-title em{font-family:var(--sub);font-style:italic;color:rgba(255,255,255,.45)}
+.section-sub{text-align:center;color:rgba(255,255,255,.5);font-size:.96rem;
+  max-width:580px;margin:0 auto}
+
+/* ── How it works ── */
+.how{padding:clamp(56px,8vw,90px) 0}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  margin-top:44px;border:1px solid var(--line)}
+.step{padding:28px;background:rgba(255,255,255,.03);position:relative}
+.step::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--line);transition:.3s}
+.step:hover::after{background:var(--gold)}
+.step-num{font-family:var(--disp);font-size:2.8rem;color:var(--gold-dim);
+  font-weight:400;line-height:1;margin-bottom:14px}
+.step-title{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:700;color:var(--white);margin-bottom:8px}
+.step-body{font-size:.88rem;color:rgba(255,255,255,.5);line-height:1.68}
+
+/* ── Engines detail ── */
+.engines-section{padding:clamp(56px,8vw,90px) 0;border-top:1px solid var(--line)}
+.engines-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px}
+.engine-card{border:1px solid var(--line);border-radius:14px;padding:26px;
+  background:rgba(255,255,255,.04);position:relative;overflow:hidden}
+.engine-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.ec-federal::before{background:var(--cyan)}
+.ec-nevada::before{background:var(--green)}
+.ec-california::before{background:rgba(242,180,71,.5)}
+.ec-tag{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+  font-weight:700;margin-bottom:10px}
+.ec-federal .ec-tag{color:var(--cyan)}
+.ec-nevada .ec-tag{color:var(--green)}
+.ec-california .ec-tag{color:var(--amber)}
+.engine-card h3{font-family:var(--disp);font-size:1.4rem;color:var(--white);
+  font-weight:400;margin-bottom:10px}
+.engine-card p{font-size:.88rem;color:rgba(255,255,255,.5);line-height:1.68;margin-bottom:16px}
+.ec-features{list-style:none;display:flex;flex-direction:column;gap:7px}
+.ec-features li{font-size:.8rem;color:rgba(255,255,255,.6);display:flex;gap:8px;line-height:1.4}
+.ec-features li::before{content:'—';color:rgba(255,255,255,.25);flex-shrink:0}
+.ec-soon{display:inline-flex;align-items:center;gap:6px;font-size:.62rem;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--amber);
+  border:1px solid rgba(242,180,71,.3);border-radius:999px;padding:4px 12px;
+  background:rgba(242,180,71,.06);margin-top:4px}
+
+/* ── Analyze Fit feature ── */
+.analyze-section{padding:clamp(56px,8vw,90px) 0;border-top:1px solid var(--line)}
+.analyze-inner{display:grid;grid-template-columns:1fr 1fr;gap:40px;
+  align-items:center;max-width:var(--max);margin:0 auto;padding:0 clamp(18px,4vw,48px)}
+.analyze-copy .section-title,.analyze-copy .section-sub{text-align:left}
+.analyze-copy .section-title{margin-bottom:12px}
+.analyze-copy .section-sub{margin:0 0 24px}
+.analyze-list{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
+.analyze-list li{display:flex;align-items:flex-start;gap:12px;font-size:.9rem;
+  color:rgba(255,255,255,.65);line-height:1.55}
+.al-icon{width:22px;height:22px;border-radius:50%;border:1px solid rgba(213,174,85,.35);
+  display:grid;place-items:center;font-size:.7rem;color:var(--gold);flex-shrink:0;margin-top:1px}
+.analyze-preview{border:1px solid var(--line-2);border-radius:16px;
+  background:linear-gradient(160deg,rgba(7,19,38,.97),rgba(2,8,22,1));
+  padding:22px;position:relative;overflow:hidden}
+.analyze-preview::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--gold),rgba(213,174,85,.2))}
+.ap-badge{font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;color:var(--gold);margin-bottom:10px}
+.ap-score{font-family:var(--disp);font-size:3.2rem;color:var(--green);
+  font-weight:400;line-height:1;margin-bottom:4px}
+.ap-rec{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--green);font-weight:700;margin-bottom:14px}
+.ap-sections{display:flex;flex-direction:column;gap:7px}
+.ap-section{border:1px solid var(--line);border-radius:7px;padding:8px 12px;
+  font-size:.76rem;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:8px}
+.ap-section .num{font-size:.58rem;color:var(--mist);width:16px;flex-shrink:0}
+.ap-section.highlight{border-color:rgba(213,174,85,.25);color:var(--silver)}
+.ap-more{text-align:center;font-size:.68rem;color:var(--mist);margin-top:10px}
+
+/* ── Pricing ── */
+.pricing-section{padding:clamp(56px,8vw,90px) 0;border-top:1px solid var(--line)}
+.pricing-card{max-width:480px;margin:44px auto 0;border:1px solid var(--line-2);
+  border-radius:16px;padding:clamp(28px,4vw,42px);background:rgba(255,255,255,.05);
+  position:relative;overflow:hidden}
+.pricing-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--gold),rgba(213,174,85,.15))}
+.price-eyebrow{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;
+  font-weight:600;color:var(--gold);margin-bottom:12px;text-align:center}
+.price-display{display:flex;align-items:baseline;gap:4px;justify-content:center;margin-bottom:4px}
+.price-amt{font-family:var(--disp);font-size:4rem;font-weight:400;color:var(--white);line-height:1}
+.price-cents{font-family:var(--disp);font-size:2rem;font-weight:400;color:var(--white);
+  line-height:1;align-self:flex-start;margin-top:8px}
+.price-per{font-size:.82rem;color:rgba(255,255,255,.4);letter-spacing:.08em;margin-left:4px}
+.price-note{text-align:center;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);margin-bottom:28px}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:11px;margin-bottom:28px}
+.price-features li{display:flex;gap:10px;font-size:.9rem;color:rgba(255,255,255,.65);line-height:1.5}
+.price-features li::before{content:'—';color:rgba(255,255,255,.3);flex-shrink:0}
+.price-features li.star{color:var(--white)}
+.price-features li.star::before{content:'★';color:var(--gold)}
+.price-features .section-divider{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,.25);border-top:1px solid var(--line);padding-top:12px;
+  margin-top:4px;list-style:none;display:block}
+.price-features .section-divider::before{display:none}
+.btn-price{display:block;width:100%;min-height:52px;background:var(--white);
+  color:var(--ink);font-family:var(--body);font-weight:700;font-size:.78rem;
+  letter-spacing:.16em;text-transform:uppercase;border:none;border-radius:5px;
+  cursor:pointer;transition:.2s;text-decoration:none;display:flex;
+  align-items:center;justify-content:center}
+.btn-price:hover{background:#EEF3FF;transform:translateY(-2px)}
+.price-fine{text-align:center;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);margin-top:12px}
+
+/* ── Footer ── */
+footer{border-top:1px solid var(--line);padding:32px clamp(18px,4vw,48px) 40px;
+  margin-top:clamp(56px,8vw,90px);background:rgba(15,42,106,.5)}
+.footer-inner{max-width:var(--max);margin:0 auto;display:flex;
+  justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.footer-brand{font-family:var(--disp);font-size:.9rem;color:var(--white)}
+.footer-links{display:flex;gap:18px;flex-wrap:wrap}
+.footer-links a{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.35);transition:.16s}
+.footer-links a:hover{color:var(--white)}
+.footer-copy{font-size:.68rem;color:rgba(255,255,255,.25);width:100%;
+  border-top:1px solid var(--line);padding-top:18px;margin-top:16px}
+
+/* ── Responsive ── */
+@media(max-width:900px){
+  .engines-grid,.steps-grid{grid-template-columns:1fr}
+  .steps-grid{border:none;gap:1px}
+  .step{border:1px solid var(--line)}
+  .analyze-inner{grid-template-columns:1fr}
+  .analyze-preview{display:none}
+  .engines-inner{flex-direction:column;gap:0}
+  .engine-tab{border-right:none;border-bottom:1px solid var(--line)}
+  .engine-tab:last-child{border-bottom:none}
+}
+@media(max-width:640px){
+  .nav-links{display:none}
+  h1{font-size:clamp(2.2rem,8vw,3.2rem)}
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-brand">
+    <div class="nav-mark">NG</div>
+    <div>
+      <div class="nav-name">NGCC</div>
+      <div class="nav-sub">National Government Contract Center</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-links">
+      <a href="/demo.html">Demo</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#pricing">Pricing</a>
+    </div>
+    <button class="btn-login" onclick="window.location.href='/login.html'">Member Login</button>
+    <button class="btn-subscribe" onclick="window.location.href='https://ai4-product-purchasing.ai4businesses.org/ngcc-offer.html'">Subscribe</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <p class="hero-eyebrow">National Government Contract Center</p>
+    <h1>Find. Analyze. <em>Win.</em></h1>
+    <p class="hero-desc">Search <strong>Federal, Nevada, and California</strong> government contracts in one dashboard — matched to your NAICS codes and analyzed for your exact fit. Stop searching, start winning.</p>
+    <div class="hero-actions">
+      <a class="btn-hero-primary" href="https://ai4-product-purchasing.ai4businesses.org/ngcc-offer.html">Subscribe — $19.99/mo</a>
+      <a class="btn-hero-secondary" href="/demo.html">See the demo &rarr;</a>
+    </div>
+    <div class="hero-trust">
+      <span class="trust-item">Federal SAM.gov contracts</span>
+      <span class="trust-item">Nevada NGEM live feed</span>
+      <span class="trust-item">AI Analyze Fit reports</span>
+      <span class="trust-item">Cancel anytime</span>
+    </div>
+  </div>
+</section>
+
+<!-- Engines strip -->
+<div class="engines-strip">
+  <div class="engines-inner">
+    <div class="engine-tab">
+      <span class="engine-dot ed-federal"></span>
+      <div>
+        <div class="engine-label">Federal Contracts</div>
+        <div class="engine-note">Live SAM.gov opportunities matched to your NAICS</div>
+      </div>
+    </div>
+    <div class="engine-tab">
+      <span class="engine-dot ed-nevada"></span>
+      <div>
+        <div class="engine-label">Nevada State</div>
+        <div class="engine-note">Open solicitations from NGEM &amp; Ionwave feed</div>
+      </div>
+    </div>
+    <div class="engine-tab">
+      <span class="engine-dot ed-california"></span>
+      <div>
+        <div class="engine-label">California State</div>
+        <div class="engine-note" style="color:var(--amber)">Coming soon — included in your subscription</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- How it works -->
+<section class="how" id="how-it-works">
+  <div class="container">
+    <p class="section-eyebrow">How It Works</p>
+    <h2 class="section-title">Three steps to <em>your next contract.</em></h2>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Subscribe &amp; Register</div>
+        <p class="step-body">Subscribe for $19.99/month. We look up your SAM.gov entity by your registered business name and pull your NAICS codes automatically — no manual entry.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">Search &amp; Discover</div>
+        <p class="step-body">Your personalized dashboard shows only open federal contracts matching your NAICS codes, plus Nevada state solicitations filtered by your business keywords.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">Analyze &amp; Pursue</div>
+        <p class="step-body">Click any contract to run a full AI Analyze Fit report — fit score, bid/no-bid rationale, compliance checklist, draft technical approach, and a proposal action plan.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Engines detail -->
+<section class="engines-section">
+  <div class="container">
+    <p class="section-eyebrow">Search Engines</p>
+    <h2 class="section-title">Three contract sources. <em>One subscription.</em></h2>
+    <p class="section-sub" style="margin-top:10px">Every open government contract that fits your business — federal, state, and local — in one dashboard.</p>
+    <div class="engines-grid">
+      <div class="engine-card ec-federal">
+        <p class="ec-tag">Federal</p>
+        <h3>Federal Contracts</h3>
+        <p>Live opportunities from SAM.gov matched to your NAICS codes and capability profile. Your dashboard only shows contracts you can actually pursue.</p>
+        <ul class="ec-features">
+          <li>NAICS-matched opportunities only</li>
+          <li>Set-aside filtering (8a, SDVOSB, WOSB, HUBZone)</li>
+          <li>Agency, deadline, and value filters</li>
+          <li>Direct link to SAM.gov for each opportunity</li>
+        </ul>
+      </div>
+      <div class="engine-card ec-nevada">
+        <p class="ec-tag">Nevada State</p>
+        <h3>Nevada Contracts</h3>
+        <p>Open state, county, city, and education solicitations from Nevada NGEM and Ionwave — updated daily. Every active Nevada bid in one place.</p>
+        <ul class="ec-features">
+          <li>Keyword matching against your capabilities</li>
+          <li>BID, RFP, and RFQ filtering</li>
+          <li>Deadline urgency indicators</li>
+          <li>Direct link to Ionwave bid detail</li>
+        </ul>
+      </div>
+      <div class="engine-card ec-california">
+        <p class="ec-tag">California State</p>
+        <h3>California Contracts</h3>
+        <p>The largest state contracting market in the country. Coming to your NGCC dashboard — included in your subscription at no extra cost.</p>
+        <ul class="ec-features">
+          <li>Cal eProcure procurement portal</li>
+          <li>State agency solicitations</li>
+          <li>Same keyword and deadline filters</li>
+        </ul>
+        <span class="ec-soon">⏳ Coming Soon</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Analyze Fit -->
+<section class="analyze-section">
+  <div class="analyze-inner">
+    <div class="analyze-copy">
+      <p class="section-eyebrow">Analyze Fit</p>
+      <h2 class="section-title" style="font-size:clamp(1.8rem,3.5vw,2.6rem)">AI bid intelligence <em>on demand.</em></h2>
+      <p class="section-sub">Click any contract in your dashboard to run a full AI analysis — instantly. Know whether to bid before you spend a single hour on a proposal.</p>
+      <ul class="analyze-list">
+        <li><span class="al-icon">✓</span>Fit score 0–100 against your NAICS profile</li>
+        <li><span class="al-icon">✓</span>Bid / No-Bid rationale — clear recommendation</li>
+        <li><span class="al-icon">✓</span>Compliance and eligibility review</li>
+        <li><span class="al-icon">✓</span>Draft technical approach paragraph</li>
+        <li><span class="al-icon">✓</span>Proposal checklist and next steps</li>
+      </ul>
+      <a class="btn-hero-secondary" href="/demo.html">See a sample report &rarr;</a>
+    </div>
+    <div class="analyze-preview">
+      <p class="ap-badge">Analyze Fit — Sample</p>
+      <div class="ap-score">87</div>
+      <div class="ap-rec">✓ Pursue this contract</div>
+      <div class="ap-sections">
+        <div class="ap-section highlight"><span class="num">05</span>Bid / No-Bid Rationale</div>
+        <div class="ap-section highlight"><span class="num">11</span>Draft Technical Approach</div>
+        <div class="ap-section highlight"><span class="num">12</span>Proposal Checklist</div>
+        <div class="ap-section"><span class="num">01</span>Opportunity Summary</div>
+        <div class="ap-section"><span class="num">03</span>Eligibility Review</div>
+        <div class="ap-section"><span class="num">09</span>Deadline Risk</div>
+      </div>
+      <div class="ap-more">+ 8 more sections in your dashboard</div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="pricing-section" id="pricing">
+  <div class="container">
+    <p class="section-eyebrow">Pricing</p>
+    <h2 class="section-title">One plan. <em>Everything included.</em></h2>
+    <div class="pricing-card">
+      <p class="price-eyebrow">NGCC Discovery</p>
+      <div class="price-display">
+        <span class="price-amt">$19</span>
+        <span class="price-cents">.99</span>
+        <span class="price-per">/ month</span>
+      </div>
+      <p class="price-note">Billed monthly &middot; Cancel anytime &middot; No contracts</p>
+      <ul class="price-features">
+        <li class="section-divider">Search Engines</li>
+        <li class="star">Federal contract search — SAM.gov live opportunities</li>
+        <li class="star">Nevada state contracts — NGEM &amp; Ionwave feed</li>
+        <li class="star">California state contracts — included when live</li>
+        <li class="section-divider">Intelligence Tools</li>
+        <li>NAICS-matched personalized dashboard</li>
+        <li class="star">Analyze Fit — full AI analysis on any contract</li>
+        <li>Keyword matching for state contracts</li>
+        <li>Export shortlist to CSV</li>
+        <li class="section-divider">Account</li>
+        <li>Single login, all three engines</li>
+        <li>Mobile + desktop dashboard</li>
+        <li>Standard support</li>
+      </ul>
+      <a class="btn-price" href="https://ai4-product-purchasing.ai4businesses.org/ngcc-offer.html">Subscribe Now &rarr;</a>
+      <p class="price-fine">Secure checkout via Stripe &middot; Cancel anytime</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">NGCC &middot; National Government Contract Center</div>
+    <div class="footer-links">
+      <a href="/demo.html">Demo</a>
+      <a href="/login.html">Member Login</a>
+      <a href="https://ai4-product-purchasing.ai4businesses.org/ngcc-offer.html">Subscribe</a>
+      <a href="mailto:support@aproposgroupllc.com">Support</a>
+    </div>
+    <div class="footer-copy">
+      &copy; <span id="yr"></span> Apropos Group LLC &middot; National Government Contract Center &middot; Not a government agency &middot; For educational and research use only. Not legal or procurement advice.
+    </div>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+// If already logged in, swap "Subscribe" for a dashboard link
+try {
+  const s = JSON.parse(sessionStorage.getItem('ngcc_session') || localStorage.getItem('ngcc_session') || 'null');
+  if (s && s.email) {
+    document.querySelector('.btn-subscribe').textContent = 'My Dashboard';
+    document.querySelector('.btn-subscribe').onclick = () => window.location.href = '/dashboard.html';
+  }
+} catch(_) {}
+</script>
+</body>
+</html>

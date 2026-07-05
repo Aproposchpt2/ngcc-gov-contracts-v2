@@ -188,6 +188,7 @@ a{color:inherit;text-decoration:none}
 
     <!-- Actions -->
     <div class="actions">
+      <a id="developProposalBtn" class="btn btn-primary" href="#" style="display:none">Develop My Proposal →</a>
       <button class="btn btn-primary" onclick="window.print()">Export as PDF</button>
       <button class="btn btn-gold" onclick="window.location.href='/dashboard.html'">← Back to Contracts</button>
       <button class="btn btn-secondary" onclick="runAnalysis()">↻ Re-run Analysis</button>
@@ -307,6 +308,13 @@ function renderReport(data) {
   if (contract.setAside && contract.setAside !== 'None') chips.push({ label: contract.setAside, cls: 'sc-g' });
   if (contract.source)    chips.push({ label: contract.source === 'nevada' ? 'Nevada State' : 'Federal', cls: 'sc-a' });
   $('scoreChips').innerHTML = chips.map(ch => `<span class="sc ${ch.cls}">${ch.label}</span>`).join('');
+
+  // Wire Develop My Proposal button with live session + notice ID
+  const devBtn = document.getElementById('developProposalBtn');
+  if (devBtn && session?.token && (contract?.noticeId || contract?.id)) {
+    devBtn.href = `https://gcpdc.aproposgroupllc.com/develop-proposal.html?session=${encodeURIComponent(session.token)}&opportunity_id=${encodeURIComponent(contract.noticeId || contract.id)}`;
+    devBtn.style.display = '';
+  }
 
   // Sections
   $('sectionsWrap').innerHTML = SECTIONS.map((s, i) => `

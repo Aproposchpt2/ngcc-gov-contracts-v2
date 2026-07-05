@@ -73,19 +73,25 @@ h1{font-family:var(--disp);font-weight:400;font-size:clamp(2.8rem,6vw,5.2rem);
 h1 em{font-family:var(--sub);font-style:italic;color:rgba(255,255,255,.45)}
 .hero-tagline{font-family:var(--sub);font-style:italic;font-size:clamp(1.2rem,2.8vw,1.65rem);
   color:rgba(255,255,255,.82);max-width:640px;margin:0 auto 14px;line-height:1.4}
-.hero-writer-cta{display:flex;align-items:center;justify-content:center;gap:10px;
-  flex-wrap:wrap;margin-top:22px;padding:14px 24px;border:1px solid rgba(213,174,85,.22);
-  border-radius:8px;background:rgba(213,174,85,.05);max-width:600px;margin-left:auto;margin-right:auto}
-.writer-label{font-size:.72rem;color:rgba(255,255,255,.45);white-space:nowrap}
-.writer-name{font-family:var(--disp);font-size:.98rem;color:var(--gold);font-weight:400;
-  letter-spacing:.01em;white-space:nowrap}
-.writer-soon{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
-  color:var(--amber);border:1px solid rgba(242,180,71,.35);border-radius:999px;
-  padding:3px 10px;background:rgba(242,180,71,.08);white-space:nowrap}
 .hero-desc{font-size:clamp(.95rem,1.8vw,1.08rem);color:rgba(255,255,255,.55);
-  max-width:600px;margin:0 auto 32px;line-height:1.78}
+  max-width:640px;margin:0 auto 20px;line-height:1.78}
 .hero-desc strong{color:var(--white);font-weight:400}
-.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:28px}
+.hero-system{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.28);margin:0 auto 28px;max-width:700px;line-height:2;text-align:center}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+.hero-proposal-cta{margin:32px auto 0;max-width:560px;border:1px solid rgba(213,174,85,.22);
+  border-radius:8px;background:rgba(213,174,85,.05);padding:24px 32px;text-align:center}
+.proposal-hook{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.38);margin-bottom:8px}
+.proposal-arrow{font-size:1rem;color:var(--gold);font-family:var(--disp);font-weight:400;
+  margin-bottom:8px;letter-spacing:.01em}
+.proposal-desc{font-size:.82rem;color:rgba(255,255,255,.45);margin-bottom:20px;line-height:1.65}
+.proposal-btn{display:inline-flex;align-items:center;justify-content:center;
+  min-height:44px;padding:0 24px;background:transparent;color:var(--gold);
+  font-family:var(--body);font-weight:700;font-size:.72rem;letter-spacing:.16em;
+  text-transform:uppercase;border:1px solid rgba(213,174,85,.5);border-radius:5px;
+  cursor:pointer;transition:.2s;text-decoration:none}
+.proposal-btn:hover{background:rgba(213,174,85,.1);transform:translateY(-2px)}
 .btn-hero-primary{display:inline-flex;align-items:center;justify-content:center;
   min-height:52px;padding:0 28px;background:var(--white);color:var(--ink);
   font-family:var(--body);font-weight:700;font-size:.78rem;letter-spacing:.16em;
@@ -101,7 +107,7 @@ h1 em{font-family:var(--sub);font-style:italic;color:rgba(255,255,255,.45)}
 .hero-trust{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
 .trust-item{font-size:.72rem;color:rgba(255,255,255,.35);letter-spacing:.06em;
   display:flex;align-items:center;gap:6px}
-.trust-item::before{content:'✓';color:var(--green);font-weight:700}
+.trust-item::before{content:'◆';color:var(--gold);font-size:.55rem;font-weight:400}
 
 /* ── Engines strip ── */
 .engines-strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);
@@ -301,24 +307,27 @@ footer{border-top:1px solid var(--line);padding:32px clamp(18px,4vw,48px) 40px;
 <!-- Hero -->
 <section class="hero">
   <div class="container">
-    <p class="hero-eyebrow">National Government Contract Center</p>
+    <p class="hero-eyebrow">NATIONAL GOVERNMENT CONTRACT CENTER &middot; FEDERAL &middot; NEVADA &middot; CALIFORNIA</p>
     <h1>Find. Analyze. <em>Win.</em></h1>
-    <p class="hero-tagline">Your command center for federal, Nevada, and California open contracts.</p>
-    <p class="hero-desc">Matched to your NAICS codes, scored for fit, and analyzed by AI — so you pursue the contracts you can actually win.</p>
-    <div class="hero-actions">
-      <a class="btn-hero-primary" href="https://ai4-product-purchasing.ai4businesses.org/ngcc-offer.html">Subscribe — $19.99/mo</a>
-      <a class="btn-hero-secondary" href="/demo.html">See the demo &rarr;</a>
-    </div>
+    <p class="hero-tagline">Your command center for government contract intelligence.</p>
+    <p class="hero-desc">Every open federal, Nevada, and California contract — matched to your NAICS codes, scored for fit, and analyzed by AI. Pursue only the contracts your business can actually win. Then develop a precision-engineered proposal and submit with confidence.</p>
+    <p class="hero-system">Live Federal Marketplace &middot; Nevada State Procurement &middot; California State Procurement &middot; AI Fit Scoring &middot; NAICS Matching &middot; Bid/No-Bid Intelligence</p>
     <div class="hero-trust">
-      <span class="trust-item">Federal SAM.gov contracts</span>
-      <span class="trust-item">Nevada NGEM live feed</span>
-      <span class="trust-item">AI Analyze Fit reports</span>
-      <span class="trust-item">Cancel anytime</span>
+      <span class="trust-item">Sourced from official public records</span>
+      <span class="trust-item">AI-scored pursuit planning</span>
+      <span class="trust-item">NAICS-matched opportunities</span>
+      <span class="trust-item">Included in BC membership</span>
     </div>
-    <div class="hero-writer-cta">
-      <span class="writer-label">Ready to write the proposal?</span>
-      <span class="writer-name">Government Contract Proposal Development</span>
-      <span class="writer-soon">Coming Soon</span>
+    <div class="hero-actions">
+      <a class="btn-hero-primary" href="https://ai4-product-purchasing.ai4businesses.org/ngcc-offer.html">Search Federal Contracts &rarr;</a>
+      <a class="btn-hero-primary" href="https://ai4-product-purchasing.ai4businesses.org/ngcc-offer.html">Search Nevada Contracts &rarr;</a>
+      <a class="btn-hero-primary" href="https://ai4-product-purchasing.ai4businesses.org/ngcc-offer.html">Search California Contracts &rarr;</a>
+    </div>
+    <div class="hero-proposal-cta">
+      <p class="proposal-hook">Found your opportunity?</p>
+      <p class="proposal-arrow">&rarr; Government Contract Proposal Development</p>
+      <p class="proposal-desc">AI-engineered proposals tailored to the solicitation. Precision-built to win.</p>
+      <a class="proposal-btn" href="#">Develop My Proposal &rarr;</a>
     </div>
   </div>
 </section>
@@ -489,9 +498,8 @@ footer{border-top:1px solid var(--line);padding:32px clamp(18px,4vw,48px) 40px;
 <!-- Built by band -->
 <div class="built-by-band">
   <div class="built-by-inner">
-    <div class="built-by-label">Built by</div>
-    <div class="built-by-name">Innovative Engineering Intelligence</div>
-    <div class="built-by-sub">Enterprise Technology OS</div>
+    <div class="built-by-name">BUILT BY INNOVATIVE ENGINEERING INTELLIGENCE</div>
+    <div class="built-by-sub">POWERED BY ENTERPRISE TECHNOLOGY OS&trade; &mdash; Precision-Built for Business.</div>
   </div>
 </div>
 

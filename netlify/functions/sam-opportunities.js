@@ -76,14 +76,8 @@ async function fetchForNaics(naicsCode, limit = 25) {
     const t = await res.text();
     throw new Error(`SAM ${res.status}: ${t.slice(0, 200)}`);
   }
-  const raw = await res.text();
-  let data;
-  try { data = JSON.parse(raw); } catch(_) { throw new Error('SAM parse failed: ' + raw.slice(0, 300)); }
-  // Expose structure when empty so we can diagnose
-  if (!data.opportunitiesData || data.opportunitiesData.length === 0) {
-    throw new Error('SAM_EMPTY:' + JSON.stringify({ totalRecords: data.totalRecords, keys: Object.keys(data), hint: data.error || data.message || data.status || 'no hint' }));
-  }
-  return data.opportunitiesData.map(mapOpportunity);
+  const data = await res.json();
+  return (data.opportunitiesData || []).map(mapOpportunity);
 }
 
 export default async (req) => {

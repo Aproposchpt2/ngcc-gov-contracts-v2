@@ -96,7 +96,7 @@ export default async (req) => {
   try {
     // Fetch for all NAICS codes in parallel, deduplicate by noticeId
     const perCode = Math.max(10, Math.floor(limit / naicsCodes.length));
-    const batches  = await Promise.all(naicsCodes.map(n => fetchForNaics(n, perCode).catch(() => [])));
+    const batches  = await Promise.all(naicsCodes.map(n => fetchForNaics(n, perCode).catch(e => { console.error('[sam-opportunities] NAICS', n, e.message); return []; })));
 
     const seen = new Set();
     const results = [];

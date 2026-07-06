@@ -181,9 +181,9 @@ button{font-family:var(--body);cursor:pointer}
   <aside class="sidebar">
     <div class="sidebar-section">
       <div class="sidebar-label">Search Engines</div>
-      <button class="nav-item active" data-tab="federal">
+      <button class="nav-item active" data-tab="federal" title="Opens CapGen Federal Dashboard">
         <span class="nav-icon">🇺🇸</span> Federal Contracts
-        <span class="nav-badge" id="fedCount">—</span>
+        <span class="soon">↗ CapGen</span>
       </button>
       <button class="nav-item" data-tab="nevada">
         <span class="nav-icon">◆</span> Nevada State
@@ -227,10 +227,10 @@ button{font-family:var(--body);cursor:pointer}
 
     <!-- Tab bar -->
     <div class="tab-bar">
-      <button class="tab active" data-tab="federal">
+      <button class="tab active" data-tab="federal" title="Opens CapGen Federal Dashboard">
         <span class="tab-dot tab-dot-federal"></span>
-        Federal
-        <span class="tab-count" id="fedTab">—</span>
+        Federal ↗
+        <span class="tab-count" id="fedTab">SAM.gov</span>
       </button>
       <button class="tab" data-tab="nevada">
         <span class="tab-dot tab-dot-nevada"></span>
@@ -407,6 +407,7 @@ button{font-family:var(--body);cursor:pointer}
   var selectedContract = null;
 
   function switchTab(name){
+    if(name === 'federal'){ window.location.href = 'https://capgen.aproposgroupllc.com'; return; }
     currentTab = name;
     ['federal','nevada','california'].forEach(function(t){
       var el = document.getElementById('tab-'+t);

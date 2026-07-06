@@ -50,10 +50,14 @@ export default async (req) => {
   const code    = generateCode();
   const expires = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
-  // Upsert OTP code
+  // Delete any existing code for this email, then insert fresh
+  await fetch(
+    `${SB_URL}/rest/v1/ngcc_login_codes?email=eq.${encodeURIComponent(email)}`,
+    { method: 'DELETE', headers: sbH() }
+  );
   await fetch(`${SB_URL}/rest/v1/ngcc_login_codes`, {
     method: 'POST',
-    headers: { ...sbH(), Prefer: 'resolution=merge-duplicates' },
+    headers: sbH(),
     body: JSON.stringify({ email, code, expires_at: expires, used: false })
   });
 

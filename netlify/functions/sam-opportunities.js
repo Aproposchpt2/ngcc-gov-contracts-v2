@@ -77,6 +77,8 @@ async function fetchForNaics(naicsCode, limit = 25) {
     throw new Error(`SAM ${res.status}: ${t.slice(0, 200)}`);
   }
   const data = await res.json();
+  console.log('[sam-opportunities] raw keys:', Object.keys(data).join(', '));
+  console.log('[sam-opportunities] totalRecords:', data.totalRecords, 'opportunitiesData count:', (data.opportunitiesData || []).length);
   return (data.opportunitiesData || []).map(mapOpportunity);
 }
 

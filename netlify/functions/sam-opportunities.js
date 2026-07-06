@@ -76,9 +76,12 @@ async function fetchForNaics(naicsCode, limit = 25) {
     const t = await res.text();
     throw new Error(`SAM ${res.status}: ${t.slice(0, 200)}`);
   }
-  const data = await res.json();
-  console.log('[sam-opportunities] raw keys:', Object.keys(data).join(', '));
-  console.log('[sam-opportunities] totalRecords:', data.totalRecords, 'opportunitiesData count:', (data.opportunitiesData || []).length);
+  const raw = await res.text();
+  const data = JSON.parse(raw);
+  // DEBUG: expose raw structure — remove after diagnosis
+  if (process.env.SAM_DEBUG === 'true') {
+    throw new Error('DEBUG_RESPONSE:' + JSON.stringify({ keys: Object.keys(data), totalRecords: data.totalRecords, firstKeys: data.opportunitiesData ? data.opportunitiesData.length : 'missing' }));
+  }
   return (data.opportunitiesData || []).map(mapOpportunity);
 }
 

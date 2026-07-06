@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -246,8 +246,25 @@ button{font-family:var(--body);cursor:pointer}
 
     <!-- Federal tab -->
     <div id="tab-federal">
-      <div class="filter-bar">
-        <input class="filter-input" id="fedSearch" placeholder="Search by title, agency, keyword…" type="text"/>
+      <!-- Entity card -->
+      <div class="fed-entity-card" id="fedEntityCard"></div>
+      <!-- Stat bar -->
+      <div class="fed-stat-bar">
+        <div class="fed-stat"><div class="fed-stat-val red" id="fedHot">—</div><div class="fed-stat-label">🔥 Closing ≤ 7d</div></div>
+        <div class="fed-stat"><div class="fed-stat-val amber" id="fedWarm">—</div><div class="fed-stat-label">⚡ Closing ≤ 14d</div></div>
+        <div class="fed-stat"><div class="fed-stat-val green" id="fedAvail">—</div><div class="fed-stat-label">Active</div></div>
+        <div class="fed-stat"><div class="fed-stat-val" id="fedTotalStat">—</div><div class="fed-stat-label">Total matched</div></div>
+      </div>
+      <!-- NAICS ribbon -->
+      <div class="fed-naics-controls">
+        <span class="fed-naics-label">NAICS</span>
+        <button class="fed-naics-ctrl-btn active-ctrl" id="fedNaicsAllBtn">Select All</button>
+        <button class="fed-naics-ctrl-btn" id="fedNaicsClearBtn">Clear All</button>
+      </div>
+      <div class="fed-naics-ribbon" id="fedNaicsRibbon"></div>
+      <!-- Controls -->
+      <div class="fed-controls">
+        <input class="filter-input" id="fedSearch" placeholder="Search by title, agency, keyword…" type="text" style="flex:1;min-width:160px"/>
         <select class="filter-select" id="fedSetAside">
           <option value="">All Set-Asides</option>
           <option value="SBA">Small Business</option>
@@ -256,12 +273,14 @@ button{font-family:var(--body);cursor:pointer}
           <option value="SDVOSB">Service-Disabled Veteran</option>
           <option value="HUBZone">HUBZone</option>
         </select>
-        <select class="filter-select" id="fedDeadline">
-          <option value="">Any Deadline</option>
-          <option value="7">Closing ≤ 7 days</option>
-          <option value="14">Closing ≤ 14 days</option>
-          <option value="30">Closing ≤ 30 days</option>
-        </select>
+        <div class="fed-win-btns">
+          <button class="fed-win-btn fwb-active" data-days="0">All</button>
+          <button class="fed-win-btn" data-days="7">7d</button>
+          <button class="fed-win-btn" data-days="14">14d</button>
+          <button class="fed-win-btn" data-days="30">30d</button>
+          <button class="fed-win-btn" data-days="60">60d</button>
+          <button class="fed-win-btn" data-days="90">90d</button>
+        </div>
         <span class="filter-count" id="fedFilterCount"></span>
       </div>
       <div class="cards" id="fedCards">
@@ -505,6 +524,13 @@ button{font-family:var(--body);cursor:pointer}
     var sa = document.getElementById('fedSetAside').value;
     var dl = parseInt(document.getElementById('fedDeadline').value)||0;
     fedFiltered = fedAll.filter(function(r){
+      // NAICS ribbon filter
+      if(fedActiveNaics.length && fedActiveNaics.indexOf(r.naicsCode) === -1) return false;
+      // Window filter
+      if(fedWindowDays > 0 && r.responseDeadline){
+        var days = Math.ceil((new Date(r.responseDeadline)-new Date())/864e5);
+        if(days < 0 || days > fedWindowDays) return false;
+      }
       if(q && !((r.title||'').toLowerCase().includes(q)||(r.agency||'').toLowerCase().includes(q))) return false;
       if(sa && (r.setAside||'').indexOf(sa)===-1) return false;
       if(dl){
@@ -537,11 +563,89 @@ button{font-family:var(--body);cursor:pointer}
     document.getElementById(id).addEventListener('input', applyFedFilters);
   });
 
+  // ── Federal Money Dashboard ───────────────────────────────
+  var fedActiveNaics = naicsCodes.slice(); // all active by default
+  var fedWindowDays  = 0; // 0 = All
+
+  // Entity card
+  (function buildEntityCard(){
+    var card = document.getElementById('fedEntityCard');
+    if(!card) return;
+    card.innerHTML =
+      '<div class="fed-ef"><div class="fed-ef-label">Business</div><div class="fed-ef-val">'+escHtml(bizName)+'</div></div>'+
+      '<div class="fed-ef"><div class="fed-ef-label">UEI</div><div class="fed-ef-val">'+escHtml(uei)+'</div></div>'+
+      '<div class="fed-ef"><div class="fed-ef-label">NAICS Codes</div><div class="fed-ef-val">'+naicsCodes.length+'</div></div>'+
+      '<div class="fed-ef"><div class="fed-ef-label">SAM Status</div><div class="fed-ef-val active">Active</div></div>';
+  })();
+
+  // NAICS ribbon
+  (function buildNaicsRibbon(){
+    var ribbon = document.getElementById('fedNaicsRibbon');
+    if(!ribbon || !naicsCodes.length) return;
+    ribbon.innerHTML = naicsCodes.map(function(code){
+      return '<div class="fed-naics-bubble nbc-active" data-code="'+code+'" onclick="toggleNaicsBubble(this,\''+code+'\')"><div class="fed-nb-code">'+code+'</div></div>';
+    }).join('');
+  })();
+
+  window.toggleNaicsBubble = function(el, code){
+    var idx = fedActiveNaics.indexOf(code);
+    if(idx >= 0){ fedActiveNaics.splice(idx, 1); el.classList.remove('nbc-active'); el.classList.add('nbc-dim'); }
+    else { fedActiveNaics.push(code); el.classList.remove('nbc-dim'); el.classList.add('nbc-active'); }
+    applyFedFilters();
+  };
+
+  document.getElementById('fedNaicsAllBtn').addEventListener('click', function(){
+    fedActiveNaics = naicsCodes.slice();
+    document.querySelectorAll('.fed-naics-bubble').forEach(function(b){ b.classList.add('nbc-active'); b.classList.remove('nbc-dim'); });
+    applyFedFilters();
+  });
+  document.getElementById('fedNaicsClearBtn').addEventListener('click', function(){
+    fedActiveNaics = [];
+    document.querySelectorAll('.fed-naics-bubble').forEach(function(b){ b.classList.remove('nbc-active'); b.classList.add('nbc-dim'); });
+    applyFedFilters();
+  });
+
+  // Window toggle
+  document.querySelectorAll('.fed-win-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      fedWindowDays = parseInt(btn.dataset.days)||0;
+      document.querySelectorAll('.fed-win-btn').forEach(function(b){ b.classList.remove('fwb-active'); });
+      btn.classList.add('fwb-active');
+      applyFedFilters();
+    });
+  });
+
+  function updateStatBar(rows){
+    var hot=0, warm=0, avail=0;
+    rows.forEach(function(r){
+      var u = r.urgency||'ok';
+      if(u==='hot') hot++;
+      else if(u==='warm') warm++;
+      else avail++;
+    });
+    document.getElementById('fedHot').textContent  = hot;
+    document.getElementById('fedWarm').textContent = warm;
+    document.getElementById('fedAvail').textContent = avail;
+    document.getElementById('fedTotalStat').textContent = rows.length;
+  }
   function loadFederal(){
     if(!naicsCodes.length){
-      document.getElementById('fedCards').innerHTML = '<div class="state-box"><div class="state-icon">◈</div><div class="state-title">Complete your profile first</div><div class="state-sub">Add your NAICS codes in My Profile to see federal contracts matched to your business.</div><div class="state-pills"><a href="/onboarding.html" style="color:var(--gold);font-size:.82rem;border:1px solid var(--gold-dim);padding:8px 18px;border-radius:8px;margin-top:8px">Set up my profile →</a></div></div>';
+      document.getElementById('fedCards').innerHTML = '<div class="state-box"><div class="state-icon">◈</div><div class="state-title">Complete your profile first</div><div class="state-sub">Add your NAICS codes in My Profile to see federal contracts matched to your business.</div></div>';
       return;
     }
+    fetch('/.netlify/functions/sam-opportunities?naics='+naicsCodes.join(',')+'&limit=100')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.error || !Array.isArray(d.results)){
+        document.getElementById('fedCards').innerHTML = '<div class="state-box"><div class="state-icon">⚠</div><div class="state-title">Could not load federal contracts</div><div class="state-sub">'+(d.message||'Please try again in a moment.')+'</div></div>';
+        return;
+      }
+      fedAll = d.results;
+      updateStatBar(fedAll);
+      applyFedFilters();
+    })
+    .catch(function(){ document.getElementById('fedCards').innerHTML = '<div class="state-box"><div class="state-icon">⚠</div><div class="state-title">Connection error</div><div class="state-sub">Check your connection and try refreshing.</div></div>'; });
+  }
     fetch('/.netlify/functions/sam-opportunities?naics='+naicsCodes.join(',')+'&limit=50', {
       headers:{ Authorization: 'Bearer '+(session.token||'') }
     })

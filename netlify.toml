@@ -1,4 +1,4 @@
-﻿[build]
+[build]
   publish = "."
   functions = "netlify/functions"
 
@@ -29,8 +29,8 @@
   for = "/.netlify/functions/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
+
 [[redirects]]
   from   = '/api/bids'
   to     = '/.netlify/functions/ngem-pipeline'
   status = 200
-

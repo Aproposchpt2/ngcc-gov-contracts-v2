@@ -191,7 +191,7 @@ button{font-family:var(--body);cursor:pointer}
       </button>
       <button class="nav-item" data-tab="california">
         <span class="nav-icon">☀</span> California State
-        <span class="soon">Soon</span>
+        <span class="nav-badge" id="caCount">—</span>
       </button>
     </div>
     <div class="sidebar-section">
@@ -240,7 +240,7 @@ button{font-family:var(--body);cursor:pointer}
       <button class="tab" data-tab="california">
         <span class="tab-dot tab-dot-california"></span>
         California
-        <span class="tab-count">Soon</span>
+        <span class="tab-count" id="caTab">—</span>
       </button>
     </div>
 
@@ -326,10 +326,19 @@ button{font-family:var(--body);cursor:pointer}
 
     <!-- California tab -->
     <div id="tab-california" style="display:none">
-      <div class="coming-soon">
-        <span class="coming-soon-tag">Coming Soon</span>
+      <div class="cards" id="caCards">
+        <div class="state-box">
+          <div class="state-icon">☀</div>
+          <div class="state-title">Loading California bids…</div>
+          <div class="loading-bar"><div class="loading-fill"></div></div>
+          <div class="state-sub">Pulling open solicitations from the California Cal eProcure pipeline.</div>
+        </div>
+      </div>
+
+      <div class="coming-soon" style="margin-top:24px">
+        <span class="coming-soon-tag">Live Feed</span>
         <h3>California State Contracts</h3>
-        <p>We are wiring the California procurement data feed now. When it launches you will have access to open solicitations from the California state procurement portal — all inside this dashboard, no extra subscription required.</p>
+        <p>Open solicitations from California are now streaming into the dashboard through the new CalStateGen pipeline.</p>
         <div class="state-pills">
           <span class="state-pill">Cal eProcure</span>
           <span class="state-pill">State Agency Bids</span>
@@ -363,7 +372,7 @@ button{font-family:var(--body);cursor:pointer}
       <div class="panel-title">Today's Matches</div>
       <div class="stat-row"><span class="stat-label">Federal</span><span class="stat-val" id="rpFedCount">—</span></div>
       <div class="stat-row"><span class="stat-label">Nevada</span><span class="stat-val" id="rpNvCount">—</span></div>
-      <div class="stat-row"><span class="stat-label">California</span><span class="stat-val" style="color:var(--mist);font-size:.78rem">Coming soon</span></div>
+      <div class="stat-row"><span class="stat-label">California</span><span class="stat-val" id="rpCaCount" style="color:var(--mist);font-size:.78rem">—</span></div>
     </div>
     <div class="analyze-cta">
       <strong>Analyze Fit</strong>
@@ -741,6 +750,60 @@ button{font-family:var(--body);cursor:pointer}
     .catch(function(){ document.getElementById('nvCards').innerHTML = '<div class="state-box"><div class="state-icon">⚠</div><div class="state-title">Could not load Nevada bids</div><div class="state-sub">Check your connection and try refreshing.</div></div>'; });
   }
 
+  // ── California bids ───────────────────────────────────────
+  var caAll = [];
+
+  function renderCaCard(r, idx){
+    var days = r.daysToClose;
+    if(days === undefined || days === null){
+      if(r.close_date){
+        days = Math.ceil((new Date(r.close_date) - new Date())/864e5);
+      } else {
+        days = 0;
+      }
+    }
+    var score = Math.max(0, Math.min(100, 100 - Math.max(days, 0)));
+    var color = fitColor(score);
+    var deadline = r.close_date ? deadlineChip(r.close_date) : '<span class="meta-chip chip-agency">Deadline TBD</span>';
+    return '<div class="contract-card" data-idx="'+idx+'" data-source="california">'+
+      '<div class="card-top">'+
+        '<div class="card-title">'+escHtml(r.title||'Untitled bid')+'</div>'+
+        '<div class="card-fit">'+
+          '<div class="fit-ring">'+fitRing(score, color)+'<div class="fit-score" style="color:'+color+'">'+score+'</div></div>'+
+          '<div class="fit-label" style="color:'+color+'">'+(days <= 7 ? 'Urgent' : days <= 14 ? 'Soon' : 'Active')+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="card-meta">'+
+        '<span class="meta-chip chip-agency">'+escHtml(r.agency||'Agency')+'</span>'+
+        (r.bid_type?'<span class="meta-chip chip-naics">'+escHtml(r.bid_type)+'</span>':'')+
+        deadline+
+      '</div>'+
+      '<div class="card-actions">'+
+        '<span class="card-deadline">Bid <strong>'+escHtml(r.solicitation_no||r.id||'—')+'</strong></span>'+
+        (r.url?'<button class="btn-view" onclick="window.open(\''+escAttr(r.url)+'\',\'_blank\')" type="button">View Bid</button>':'')+
+      '</div>'+
+    '</div>';
+  }
+
+  function loadCalifornia(){
+    fetch('/.netlify/functions/cal-pipeline')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var bids = d.bids || d.results || d || [];
+      if(!Array.isArray(bids)) bids = [];
+      caAll = bids.map(function(b){ return b; });
+      document.getElementById('caTab').textContent = caAll.length;
+      document.getElementById('caCount').textContent = caAll.length;
+      document.getElementById('rpCaCount').textContent = caAll.length;
+      var box = document.getElementById('caCards');
+      if(!caAll.length){
+        box.innerHTML = '<div class="state-box"><div class="state-icon">🔍</div><div class="state-title">No California bids matched</div><div class="state-sub">The new pipeline is live, but there are no current bids to display.</div></div>';
+        return;
+      }
+      box.innerHTML = caAll.map(renderCaCard).join('');
+    })
+    .catch(function(){ document.getElementById('caCards').innerHTML = '<div class="state-box"><div class="state-icon">⚠</div><div class="state-title">Could not load California bids</div><div class="state-sub">Check your connection and try refreshing.</div></div>'; });
+  }
   // ── Keyword fit score ─────────────────────────────────────
   function computeKeywordFit(record, keywords){
     if(!keywords.length) return Math.floor(40 + Math.random()*30);
@@ -772,8 +835,12 @@ button{font-family:var(--body);cursor:pointer}
   // ── Boot ──────────────────────────────────────────────────
   loadFederal();
   loadNevada();
+  loadCalifornia();
 
 })();
 </script>
 </body>
 </html>
+
+
+

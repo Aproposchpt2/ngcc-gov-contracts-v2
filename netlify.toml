@@ -30,6 +30,7 @@
   [headers.values]
     Access-Control-Allow-Origin = "*"
 [[redirects]]
-  from   = "/api/bids"
-  to     = "/.netlify/functions/cal-pipeline"
+  from   = '/api/bids'
+  to     = '/.netlify/functions/ngem-pipeline'
   status = 200
+

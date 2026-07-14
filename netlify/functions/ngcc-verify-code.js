@@ -3,7 +3,7 @@
 // Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 
 const FALLBACK_SB_URL = 'https://judislfknmhofcgzyozc.supabase.co';
-const SB_URL = normalizeSupabaseUrl(process.env.SUPABASE_URL);
+const SB_URL = normalizeSupabaseUrl(process.env.SUPABASE_URL || process.env.BC_SUPA_URL);
 const SB_KEY = chooseSupabaseKey();
 
 const CORS = {
@@ -29,10 +29,11 @@ function chooseSupabaseKey() {
   const candidates = [
     process.env.SUPABASE_SERVICE_ROLE_KEY,
     process.env.SUPABASE_SERVICE_KEY,
-    process.env.SUPABASE_KEY
+    process.env.SUPABASE_KEY,
+    process.env.BC_SUPA_KEY
   ]
     .map((value) => String(value || '').trim())
-    .filter((value) => value && value.indexOf('*') < 0 && value.indexOf('No value set') !== 0);
+    .filter((value) => value && value.indexOf('No value set') !== 0);
   return candidates.find((value) => value.length > 40) || candidates[0] || '';
 }
 

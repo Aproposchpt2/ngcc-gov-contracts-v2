@@ -4,7 +4,7 @@
 
 const FALLBACK_SB_URL = 'https://judislfknmhofcgzyozc.supabase.co';
 const SB_URL  = normalizeSupabaseUrl(process.env.SUPABASE_URL || process.env.BC_SUPA_URL);
-const SB_KEY  = chooseSupabaseKey();
+const SB_KEYS = getSupabaseKeyCandidates();
 const RS_KEY  = process.env.RESEND_API_KEY;
 const RS_FROM = process.env.RESEND_FROM_EMAIL || 'NGCC <noreply@ai4businesses.org>';
 
@@ -27,8 +27,8 @@ function normalizeSupabaseUrl(value) {
   return FALLBACK_SB_URL;
 }
 
-function chooseSupabaseKey() {
-  const candidates = [
+function getSupabaseKeyCandidates() {
+  return [
     process.env.SUPABASE_SERVICE_KEY,
     process.env.BC_SUPA_KEY,
     process.env.SUPABASE_SERVICE_ROLE_KEY,
@@ -36,11 +36,25 @@ function chooseSupabaseKey() {
   ]
     .map((value) => String(value || '').trim())
     .filter((value) => value && value.indexOf('No value set') !== 0 && !/^\*+$/.test(value));
-  return candidates.find((value) => value.length > 40) || candidates[0] || '';
 }
 
-function sbH() {
-  return { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' };
+function sbH(key) {
+  return { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' };
+}
+
+async function fetchWithAnyKey(url, options) {
+  for (const key of SB_KEYS) {
+    const merged = Object.assign({}, options || {});
+    merged.headers = Object.assign({}, options && options.headers ? options.headers : {}, sbH(key));
+    const response = await fetch(url, merged);
+    if (response.status === 401) {
+      const body = await response.text();
+      if (body.toLowerCase().indexOf('invalid api key') >= 0) continue;
+      return { response, key };
+    }
+    return { response, key };
+  }
+  return { response: null, key: '' };
 }
 
 function generateCode() {
@@ -50,7 +64,7 @@ function generateCode() {
 export default async (req) => {
   if (req.method === 'OPTIONS') return new Response('', { headers: CORS });
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
-  if (!SB_URL || !SB_KEY) return json({ error: 'Missing Supabase configuration' }, 500);
+  if (!SB_URL || !SB_KEYS.length) return json({ error: 'Missing Supabase configuration' }, 500);
   if (!RS_KEY) return json({ error: 'Missing RESEND_API_KEY configuration' }, 500);
 
   try {
@@ -63,10 +77,13 @@ export default async (req) => {
     }
 
     // Check for active NGCC subscriber
-    const subRes = await fetch(
+    const subLookup = await fetchWithAnyKey(
       `${SB_URL}/rest/v1/ngcc_subscribers?email=eq.${encodeURIComponent(email)}&status=eq.active&limit=1`,
-      { headers: sbH() }
+      {}
     );
+    const subRes = subLookup.response;
+    const workingKey = subLookup.key;
+    if (!subRes) return json({ error: 'Supabase auth key is invalid' }, 500);
     if (!subRes.ok) {
       const details = await subRes.text();
       return json({ error: 'Subscriber lookup failed', details: details.slice(0, 250) }, 502);
@@ -82,11 +99,11 @@ export default async (req) => {
     // Delete any existing code for this email, then insert fresh
     await fetch(
       `${SB_URL}/rest/v1/ngcc_login_codes?email=eq.${encodeURIComponent(email)}`,
-      { method: 'DELETE', headers: sbH() }
+      { method: 'DELETE', headers: sbH(workingKey) }
     );
     const insertRes = await fetch(`${SB_URL}/rest/v1/ngcc_login_codes`, {
       method: 'POST',
-      headers: sbH(),
+      headers: sbH(workingKey),
       body: JSON.stringify({ email, code, expires_at: expires, used: false })
     });
     if (!insertRes.ok) {

@@ -4,7 +4,7 @@
 
 const FALLBACK_SB_URL = 'https://judislfknmhofcgzyozc.supabase.co';
 const SB_URL = normalizeSupabaseUrl(process.env.SUPABASE_URL || process.env.BC_SUPA_URL);
-const SB_KEY = chooseSupabaseKey();
+const SB_KEYS = getSupabaseKeyCandidates();
 
 const CORS = {
   'Content-Type': 'application/json',
@@ -25,8 +25,8 @@ function normalizeSupabaseUrl(value) {
   return FALLBACK_SB_URL;
 }
 
-function chooseSupabaseKey() {
-  const candidates = [
+function getSupabaseKeyCandidates() {
+  return [
     process.env.SUPABASE_SERVICE_KEY,
     process.env.BC_SUPA_KEY,
     process.env.SUPABASE_SERVICE_ROLE_KEY,
@@ -34,17 +34,31 @@ function chooseSupabaseKey() {
   ]
     .map((value) => String(value || '').trim())
     .filter((value) => value && value.indexOf('No value set') !== 0 && !/^\*+$/.test(value));
-  return candidates.find((value) => value.length > 40) || candidates[0] || '';
 }
 
-function sbH() {
-  return { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' };
+function sbH(key) {
+  return { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' };
+}
+
+async function fetchWithAnyKey(url, options) {
+  for (const key of SB_KEYS) {
+    const merged = Object.assign({}, options || {});
+    merged.headers = Object.assign({}, options && options.headers ? options.headers : {}, sbH(key));
+    const response = await fetch(url, merged);
+    if (response.status === 401) {
+      const body = await response.text();
+      if (body.toLowerCase().indexOf('invalid api key') >= 0) continue;
+      return { response, key };
+    }
+    return { response, key };
+  }
+  return { response: null, key: '' };
 }
 
 export default async (req) => {
   if (req.method === 'OPTIONS') return new Response('', { headers: CORS });
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
-  if (!SB_URL || !SB_KEY) return json({ error: 'Missing Supabase configuration' }, 500);
+  if (!SB_URL || !SB_KEYS.length) return json({ error: 'Missing Supabase configuration' }, 500);
 
   let body;
   try { body = await req.json(); } catch(_) { return json({ error: 'Invalid request body' }, 400); }
@@ -57,10 +71,13 @@ export default async (req) => {
   }
 
   // Fetch the OTP record
-  const codeRes = await fetch(
+  const codeFetch = await fetchWithAnyKey(
     `${SB_URL}/rest/v1/ngcc_login_codes?email=eq.${encodeURIComponent(email)}&code=eq.${code}&used=eq.false&order=expires_at.desc&limit=1`,
-    { headers: sbH() }
+    {}
   );
+  const codeRes = codeFetch.response;
+  const workingKey = codeFetch.key;
+  if (!codeRes) return json({ ok: false, error: 'Supabase auth key is invalid.' }, 500);
   const codes = await codeRes.json();
 
   if (!Array.isArray(codes) || codes.length === 0) {
@@ -75,13 +92,13 @@ export default async (req) => {
   // Mark code as used
   await fetch(
     `${SB_URL}/rest/v1/ngcc_login_codes?email=eq.${encodeURIComponent(email)}&code=eq.${code}`,
-    { method: 'PATCH', headers: sbH(), body: JSON.stringify({ used: true }) }
+    { method: 'PATCH', headers: sbH(workingKey), body: JSON.stringify({ used: true }) }
   );
 
   // Fetch subscriber profile
   const subRes = await fetch(
     `${SB_URL}/rest/v1/ngcc_subscribers?email=eq.${encodeURIComponent(email)}&limit=1`,
-    { headers: sbH() }
+    { headers: sbH(workingKey) }
   );
   const subs = await subRes.json();
   const sub  = Array.isArray(subs) ? subs[0] : {};

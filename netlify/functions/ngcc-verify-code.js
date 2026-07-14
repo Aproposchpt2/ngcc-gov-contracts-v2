@@ -2,8 +2,9 @@
 // Validates the 6-digit code, marks it used, returns a session object.
 // Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 
-const SB_URL = process.env.SUPABASE_URL;
-const SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const FALLBACK_SB_URL = 'https://judislfknmhofcgzyozc.supabase.co';
+const SB_URL = normalizeSupabaseUrl(process.env.SUPABASE_URL);
+const SB_KEY = chooseSupabaseKey();
 
 const CORS = {
   'Content-Type': 'application/json',
@@ -15,6 +16,26 @@ function json(body, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: CORS });
 }
 
+function normalizeSupabaseUrl(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return FALLBACK_SB_URL;
+  if (raw.indexOf('*') >= 0) return FALLBACK_SB_URL;
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (/^[a-z0-9]{20,}$/i.test(raw)) return 'https://' + raw + '.supabase.co';
+  return FALLBACK_SB_URL;
+}
+
+function chooseSupabaseKey() {
+  const candidates = [
+    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    process.env.SUPABASE_SERVICE_KEY,
+    process.env.SUPABASE_KEY
+  ]
+    .map((value) => String(value || '').trim())
+    .filter((value) => value && value.indexOf('*') < 0 && value.indexOf('No value set') !== 0);
+  return candidates.find((value) => value.length > 40) || candidates[0] || '';
+}
+
 function sbH() {
   return { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' };
 }
@@ -22,6 +43,7 @@ function sbH() {
 export default async (req) => {
   if (req.method === 'OPTIONS') return new Response('', { headers: CORS });
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
+  if (!SB_URL || !SB_KEY) return json({ error: 'Missing Supabase configuration' }, 500);
 
   let body;
   try { body = await req.json(); } catch(_) { return json({ error: 'Invalid request body' }, 400); }

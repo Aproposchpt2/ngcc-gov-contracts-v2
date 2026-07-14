@@ -27,13 +27,13 @@ function normalizeSupabaseUrl(value) {
 
 function chooseSupabaseKey() {
   const candidates = [
-    process.env.SUPABASE_SERVICE_ROLE_KEY,
     process.env.SUPABASE_SERVICE_KEY,
-    process.env.SUPABASE_KEY,
-    process.env.BC_SUPA_KEY
+    process.env.BC_SUPA_KEY,
+    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    process.env.SUPABASE_KEY
   ]
     .map((value) => String(value || '').trim())
-    .filter((value) => value && value.indexOf('No value set') !== 0);
+    .filter((value) => value && value.indexOf('No value set') !== 0 && !/^\*+$/.test(value));
   return candidates.find((value) => value.length > 40) || candidates[0] || '';
 }
 
